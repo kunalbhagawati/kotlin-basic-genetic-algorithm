@@ -1,16 +1,23 @@
 package me.kunalbhagawati
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-fun main() {
-    val name = "Kotlin"
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    println("Hello, $name!")
+import me.kunalbhagawati.Algorithm.evolvePopulation
 
-    for (i in 1..5) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        println("i = $i")
-    }
+fun main() {
+  // Set a candidate solution
+  State.setSolution("1111000000000000000000000000000000000000000000000000000000001111")
+
+  // Create an initial population
+  var population = Population.fromPopulationSize(50)
+
+  // Evolve our population until we reach an optimum solution
+  var generationCount = 0
+  while (population.fittest.fitness < State.maxFitness) {
+    generationCount++
+    println("Generation: $generationCount Fittest: ${population.fittest} Fitness: ${population.fittest.fitness}")
+    population = evolvePopulation(population)
+  }
+  println("Solution found!")
+  println("Generation: $generationCount")
+  println("Genes:")
+  println(population.fittest)
 }

@@ -1,54 +1,38 @@
 package me.kunalbhagawati
 
-class Individual {
-    private val genes = ByteArray(defaultGeneLength)
+class Individual(genes: ByteArray? = null) {
+  companion object {
+    var defaultGeneLength: Int = 64
 
-    // Cache
-    private var fitness = 0
+    /** Get back a random genetic sequence. */
+    fun generateGenes(size: Int? = null): ByteArray =
+        (0 ..< (size ?: defaultGeneLength)).map { Math.round(Math.random()).toByte() }.toByteArray()
+  }
 
-    // Create a random individual
-    fun generateIndividual() {
-        for (i in 0 until size()) {
-            val gene = Math.round(Math.random()).toByte()
-            genes[i] = gene
-        }
+  val genes: ByteArray
+
+  operator fun get(idx: Int) = genes[idx]
+
+  operator fun set(idx: Int, value: Byte) {
+    genes[idx] = value
+  }
+
+  val size: Int
+    get() = genes.size
+
+  // Cache
+  var fitness: Int = 0
+    get() {
+      if (field == 0) {
+        field = Algorithm.getFitness(this)
+      }
+      return field
     }
 
-    fun getGene(index: Int): Byte {
-        return genes[index]
-    }
+  init {
+    this.genes = genes ?: generateGenes(size = defaultGeneLength)
+  }
 
-    fun setGene(index: Int, value: Byte) {
-        genes[index] = value
-        fitness = 0
-    }
-
-    /* Public methods */
-    fun size(): Int {
-        return genes.size
-    }
-
-    fun getFitness(): Int {
-        if (fitness == 0) {
-            fitness = FitnessCalc.getFitness(this)
-        }
-        return fitness
-    }
-
-    override fun toString(): String {
-        var geneString = ""
-        for (i in 0 until size()) {
-            geneString += getGene(i)
-        }
-        return geneString
-    }
-
-    companion object {
-        var defaultGeneLength: Int = 64
-
-        /* Getters and setters */ // Use this if you want to create individuals with different gene lengths
-        fun setDefaultGeneLength(length: Int) {
-            defaultGeneLength = length
-        }
-    }
+  override fun toString(): String =
+      genes.toList().chunked(8).map { it.joinToString("") }.joinToString("-")
 }
